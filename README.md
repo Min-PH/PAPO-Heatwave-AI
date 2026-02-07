@@ -138,6 +138,13 @@ ________________________________________
 
 Pull requests adding code implementations are not expected; links to downstream forks or example implementations are welcome.
 ________________________________________
+## Example Implementations (maintained by contributors)
+
+This section links to independent simulation projects inspired by the CMDDS framework and maintained by their respective contributors (e.g., PAPO-Heatwaves-YourCity).
+If you develop a simulation based on this framework and would like it referenced here, please feel free to reach out.
+
+--------------------------------
+
 ## Background and Conceptual Origins (Optional Reading)
 The PAPO framework and its application to heatwaves are described in:
 
@@ -157,6 +164,7 @@ See LICENSE for details.
 
 ## Changelog
 - **v1.0** — Initial release; defines entities, inputs, core logic, outputs, and temporal phases for PAPO–Heatwaves. Simulation-ready for developer adoption.
+
 
 
 
