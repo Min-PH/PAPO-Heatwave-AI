@@ -73,19 +73,21 @@ To reduce implementation difficulty, the framework supports small, modular simul
 
 ### Step 2 — Conceptual Entities, Attributes, and States
 Defines simulation entities including:
-•	Individuals / households
-•	Policy and institutional systems
-•	Opportunity resources (cooling centers, transport, volunteers)
-•	Environmental context
+
+*	Individuals / households
+*	Policy and institutional systems
+*	Opportunity resources (cooling centers, transport, volunteers)
+*	Environmental context
 
 Attributes are explicitly categorized as static, contextual, or dynamic.
 
 ### Step 3 — Policy-to-Feasible-Opportunity Logic
 Defines the core translation mechanism:
-•	policy triggers → eligibility rules
-•	vulnerability + context → feasible micro-opportunities
-•	delivery under real-world constraints
-•	feedback → state updates
+
+*	policy triggers → eligibility rules
+*	vulnerability + context → feasible micro-opportunities
+*	delivery under real-world constraints
+*	feedback → state updates
 
 This logic must be preserved across implementations, regardless of simulation method.
 
@@ -155,5 +157,6 @@ See LICENSE for details.
 
 ## Changelog
 - **v1.0** — Initial release; defines entities, inputs, core logic, outputs, and temporal phases for PAPO–Heatwaves. Simulation-ready for developer adoption.
+
 
 
