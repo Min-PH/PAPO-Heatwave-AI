@@ -1,4 +1,4 @@
-PAPO-Heatwave-AI Project License
+# PAPO-Heatwave-AI Project License
 ============================
 
 This repository contains:
@@ -9,7 +9,7 @@ This repository contains:
 Different components are licensed as follows:
 
 --------------------------------------------------
-1. Conceptual Framework & Documentation
+## 1. Conceptual Framework & Documentation
 --------------------------------------------------
 
 The PAPO (Policy-Aware Personalized Opportunity) framework, CMDDS concepts,
@@ -34,7 +34,7 @@ License text:
 https://creativecommons.org/licenses/by/4.0/
 
 --------------------------------------------------
-2. Code & Software Artifacts
+## 2. Code & Software Artifacts
 --------------------------------------------------
 
 All source code and executable artifacts in this repository are licensed under
@@ -62,7 +62,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 --------------------------------------------------
-3. Disclaimer
+## 3. Disclaimer
 --------------------------------------------------
 
 This project provides conceptual models and reference implementations for
@@ -78,3 +78,4 @@ research and simulation purposes only.
 --------------------------------------------------
 End of License
 --------------------------------------------------
+
