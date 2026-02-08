@@ -137,6 +137,21 @@ ________________________________________
 6.	Document assumptions and deviations clearly
 
 Pull requests adding code implementations are not expected; links to downstream forks or example implementations are welcome.
+
+----------------------------
+## After You Fork This Repo
+If you fork or extend this repository:
+
+* First decide which side of the trade-off you are on: thinking instrument vs. real-world exploration.
+* This repo is designed as a theory-bounded, non-predictive simulation.
+* Consider your local context and urgent needs to select simulation questions that are relevant to your city or community.
+* Do not add realism by default; add complexity only to test a clear theoretical question.
+* Explicitly declare any new idealizations or boundary changes you introduce.
+* Document the context and assumptions of your fork so others can understand your choices.
+* Do not interpret outputs as real-world predictions or policy recommendations.
+* Use forks to explore scenario comparisons, structural questions, or policy mechanisms under controlled assumptions.
+
+Read this before extending: see FORK_SIMULATION_SUGGESTIONS.md for full guidance on trade-offs, idealizations, and boundary reductions.
 ________________________________________
 ## Example Implementations (maintained by contributors)
 
@@ -164,6 +179,7 @@ See LICENSE for details.
 
 ## Changelog
 - **v1.0** — Initial release; defines entities, inputs, core logic, outputs, and temporal phases for PAPO–Heatwaves. Simulation-ready for developer adoption.
+
 
 
 
