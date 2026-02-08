@@ -1,6 +1,6 @@
-PAPO–Heatwaves-AI (CMDDS for PAPO-Heatwaves)
+### PAPO–Heatwaves-AI (CMDDS for PAPO-Heatwaves) Readme File
 
-# CMDDS — PAPO Heatwave Framework
+# Readme: CMDDS — PAPO Heatwave Framework
 ## Conceptual Model Design Documentation for Simulation (CMDDS)
 **Version:** 1.0  
 **Date:** 2026-02-06  
@@ -179,6 +179,7 @@ See LICENSE for details.
 
 ## Changelog
 - **v1.0** — Initial release; defines entities, inputs, core logic, outputs, and temporal phases for PAPO–Heatwaves. Simulation-ready for developer adoption.
+
 
 
 
