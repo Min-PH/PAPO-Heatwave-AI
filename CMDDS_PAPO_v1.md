@@ -273,6 +273,11 @@ ________________________________________
 This repository provides the CMDDS artifact for PAPO heatwave applications. Simulation implementations are intentionally 
 left open and are expected to reside in forks or downstream projects.
 
+## Related References
+- **Springer Textbook:** Min Wu. *AI for Public Health: PAPO–Heatwaves Chapter.* Springer, 2026. DOI: [Insert DOI]  
+- **SSRN Preprint:** [Insert Link]  
+
 ## Changelog
 v1.0 — Initial release; defines entities, inputs, logic, outputs, and temporal phases for PAPO–Heatwaves.
+
 
