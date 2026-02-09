@@ -13,11 +13,13 @@
 This repository contains the Conceptual Model Design Documentation for Simulation (CMDDS) for PAPO–Heatwaves — a policy-aware, opportunity-oriented framework for simulating heatwave response at the city or community level.
 
 The CMDDS specifies what should be simulated (purpose, entities, logic, and limits) without prescribing how to implement it. It is intentionally implementation-agnostic, enabling downstream developers to build:
- 
+
 *	agent-based simulations
 *	system dynamics or hybrid models
 *	digital twins of city heat-response systems
 *	VR / immersive environments for training, planning, or public communication
+
+This repository is a conceptual specification, not a runnable implementation. CMDDS is meant to be forked, adapted, and instantiated across different local contexts, simulation paradigms, and technical stacks. Developers should treat this repository as a scaffolding for design, not as executable code or a fully parameterized model. Early forks are expected to diverge, experiment, and even contradict one another; such variation is intentional and part of the design philosophy.
 
 Ongoing maintenance of this repository is minimal. Users are encouraged to fork this repo and implement simulations tailored to their own cities or use cases.
 ________________________________________
@@ -179,6 +181,7 @@ See LICENSE for details.
 
 ## Changelog
 - **v1.0** — Initial release; defines entities, inputs, core logic, outputs, and temporal phases for PAPO–Heatwaves. Simulation-ready for developer adoption.
+
 
 
 
