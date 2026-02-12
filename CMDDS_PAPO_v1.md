@@ -147,6 +147,26 @@ by policy triggers, opportunity delivery, and feedback.
 This step defines what data exists and when it becomes active, not how it is modeled. Parameterization, data sources, 
 and AI methods are intentionally left to downstream implementations.
 
+### Resource Pools (Required for Stress Testing)
+Simulations must model opportunity resources as exhaustible, location aware pools with dynamic availability:
+
+*	Cooling center slots (capacity per facility, real-time occupancy)
+*	Transport vehicles (fleet size, range, round-trip time, driver shifts)
+*	Volunteer network (response probability, travel time, availability windows)
+
+Resource state is updated every time step: allocation reduces availability; completion of trip or visit replenishes it.
+Without this, simulations cannot detect bottlenecks or test feasibility-driven failure modes.
+
+### Bias Injection (Recommended)
+To test equity robustness, implementers should inject historical bias into opportunity ranking or eligibility models. For example:
+
+*	Train a simple ML ranker on data where 80% of past recipients had personal vehicles.
+*	Measure the disparity in opportunity rates between car-owning and car-less groups.
+*	Compare against a fairness constrained version (e.g., demographic parity).
+
+This step is optional but strongly encouraged to surface the equity/prediction conflict inherent in AI enabled systems.
+This step defines what data exists and when it becomes active, not how it is modeled. Parameterization, data sources, and AI methods are intentionally left to downstream implementations.
+
 -------------------------------
 ## CMDDS Step 3 — Core Translation & State Transition Logic
 
@@ -176,12 +196,14 @@ Output: prioritized individuals and feasible intervention sets.
 *	Policy-constrained options are translated into concrete, actionable micro-opportunities.
 *	Opportunities are specific, time-bound, and resource-aware (e.g., nearest available cooling center with accessible transport).
 *	No opportunity is generated if feasibility criteria are not met.
-
-Output: feasible, individualized opportunity candidates.
+*	If no feasible opportunity exists (resource exhaustion, geographic inaccessibility, conflicting rules), the engine must output a null or empty set. This is not an error state—it is a required failure mode that triggers escalation.
+  
+Output: feasible, individualized opportunity candidates (or null).
 
 #### 4. Opportunity Delivery and Escalation
 
 *	Opportunities are delivered via appropriate channels (e.g., text, voice, app, human outreach).
+*	Human system handover: Define a clear boundary. Low risk, reversible actions (e.g., sending an informational text) may be fully automated; actions involving resource commitment or physical safety (e.g., dispatching transport, volunteer entry) require explicit human authorisation. Simulate delay, rejection, or manual override.
 *	Delivery failures or non-response may trigger escalation pathways (e.g., in-person checks).
 *	Human supervision and accountability are assumed for escalated actions.
 
@@ -191,6 +213,10 @@ Output: delivered opportunities and delivery status updates.
 
 *	Uptake, non-uptake, delays, and resource utilization are recorded.
 *	System states are updated for individuals, resources, and policy context.
+*	Two feedback loops must be distinguished:
+    *	Tactical loop (minutes to hours): real-time reallocation of existing resources (e.g., reroute idle transport, open overflow cooling).
+    *	Strategic loop (months to years): post season aggregation to update eligibility criteria, budget planning, and vulnerability definitions.
+    *	Conflating these loops risks instability or policy inertia; simulations should implement them separately.
 *	Aggregated, privacy-preserving feedback informs subsequent cycles.
 
 Output: updated system state for next simulation step.
@@ -217,7 +243,20 @@ This step defines the non-negotiable logic core of PAPO–Heatwaves. All downstr
 ---------------------------
 ## CMDDS Step 4 — Simulation Outputs, Interpretation, and Limits
 
-This step defines what simulation outputs represent, how they should be interpreted, and the boundaries within which results are valid.
+### Scope and Assumptions – Read Before Simulating
+This CMDDS defines a logical pathway, not an operational system. It rests on several simplifying assumptions that fail under real-world conditions. Simulations are intended to stress test these assumptions, not to validate the framework as a turnkey solution.
+
+Explicit assumptions embedded in this CMDDS:
+
+1.	Policy is machine-readable – We assume eligibility criteria, thresholds, and rules can be unambiguously encoded. In practice, policy often contains discretion, contradiction, or underspecified terms.
+2.	A feasible opportunity always exists – The PAPO translation sequence as drawn assumes the engine can always generate an intervention. The required null output (Step 3.3) is an extension that must be implemented by fork.
+3.	Resources are sufficient – Many illustrations assume infinite capacity. Real heatwaves require prioritization under scarcity.
+4.	Human system handover is resolvable – We do not prescribe who authorizes what; this must be specified per deployment.
+5.	Feedback operates on a single timescale – The CMDDS now separates tactical and strategic loops; simulations must respect this separation.
+6.	Data are unbiased – Historical data used to train opportunity rankers will systematically under represent marginalized groups unless fairness constraints are added.
+
+Failure to explicitly model these assumptions will produce optimistic, non generalizable results.
+We publish this CMDDS as a shared grammar, not a finished architecture. Local forks must extend it with triage rules, bias audits, equity metrics, and explicit allocation logic.
 
 ### Outputs of Interest
 Simulations derived from this CMDDS may examine:
@@ -227,8 +266,37 @@ Simulations derived from this CMDDS may examine:
 *	Resource utilization, saturation, and bottlenecks
 *	Differential impacts across vulnerability groups or locations
 *	Sensitivity to timing, capacity, access, and policy triggers
+*	Comparative performance of different prioritization rules (see below)
 
 Outputs may be generated at individual, neighborhood, or system levels.
+
+### Prioritization Rules (Required under Scarcity)
+When demand exceeds supply, a prioritization rule must be superimposed on the PAPO logic. This rule is not derivable from clinical risk or policy eligibility alone—it is a normative choice. Simulate and compare at least two of the following:
+
+| Rule               | Definition                                                                 |
+|--------------------|---------------------------------------------------------------------------|
+| Clinical risk only | Priority based on age + comorbidities + exposure (no barrier weighting). |
+| Equity weighted    | Clinical risk × barrier index (e.g., no AC, mobility, food desert).      |
+| Random lottery     | Equal probability among eligible individuals.                             |
+| Easiest first      | Minimize resource consumption per intervention (e.g., nearest cooling centre, shortest transport). |
+| Worst off first    | Maximize urgency (e.g., highest indoor temperature, longest exposure).    |
+
+Measure: final health status distribution (or proxy, e.g., time to opportunity), resource utilization, and equity metrics.
+
+### Equity Metrics (Define Before You Run)
+
+Choose one or more — each encodes a different ethical commitment:
+
+| Metric              | Definition |
+|---------------------|------------|
+| Equal allocation    | Same proportion served across groups (e.g., by income, race, disability). |
+| Equal outcomes      | Post-event health status equalized (or proxy measure, e.g., mean indoor temperature). |
+| Prioritizing        | Weighted benefit allocation — greater weight assigned to worse-off individuals. |
+| Sufficient          | Ensure everyone reaches a minimum safety threshold (e.g., access to cooling within 1 hour). |
+
+> ⚠️ **Important:**  
+> Defaulting to “no metric” implicitly optimizes for efficiency alone.  
+> Always state your selected equity metric explicitly in simulation results.
 
 ### Interpretation Guidance
 Simulation outputs should be interpreted as:
@@ -254,6 +322,7 @@ Downstream forks may:
 *	Add city-specific metrics or visualizations
 *	Integrate digital twins or VR environments
 *	Compare PAPO against alert-only baselines
+*	Add new failure modes (e.g., sensor noise, policy conflict, resource shock)
 
 All extensions should clearly document assumptions and deviations from this CMDDS.
 
@@ -269,6 +338,8 @@ An older adult living alone in a metropolitan area, with limited mobility, cardi
   and resource signals.
 The system identifies a nearby staffed cooling center, arranges accessible transportation, and coordinates community 
 volunteer support under supervision. Aggregated feedback informs future responses for similarly vulnerable populations.
+
+This scenario assumes resource availability. In a full simulation, the same individual might receive null if the cooling center is full, no transport is available, and volunteers are exhausted. That failure outcome is as informative as success.
 ________________________________________
 This repository provides the CMDDS artifact for PAPO heatwave applications. Simulation implementations are intentionally 
 left open and are expected to reside in forks or downstream projects.
@@ -279,5 +350,8 @@ left open and are expected to reside in forks or downstream projects.
 
 ## Changelog
 v1.0 — Initial release; defines entities, inputs, logic, outputs, and temporal phases for PAPO–Heatwaves.
+
+v1.1 — Added simulation specific modules: resource pools, null output failure mode, human system handover, separated feedback loops, prioritization rules, equity metrics, bias injection, and explicit assumption/scope box.
+
 
 
