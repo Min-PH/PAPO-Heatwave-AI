@@ -6,6 +6,17 @@ This repository is designed as a theory-bounded, non-predictive simulation. It s
 
 ## Core Trade-off
 
+This repository is designed as a **theory-bounded, non-predictive simulation**.  
+It serves as a *thinking instrument* for exploring conditional behaviors under controlled assumptions — not as a real-world mirror.
+
+| Thinking Instrument | Real-World Exploration |
+|---------------------|------------------------|
+| Tight boundaries, deliberate idealizations | Loose boundaries, high realism |
+| Focus on mechanisms, comparison, theory testing | Focus on prediction, replication, operational use |
+| Small, interpretable, fast | Large, data-heavy, harder to interpret |
+| Results are comparative signals | Results are estimates or forecasts |
+
+
 Thinking Instrument vs. Real-World Exploration
 
 * Simulations with tight boundaries and idealizations are useful for reasoning, comparison, and theory testing.
