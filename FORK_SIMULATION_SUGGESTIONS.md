@@ -1,4 +1,6 @@
 # Fork Simulation Suggestions
+**Version:** 1.1 (Simulation-Ready Extensions)  
+**Date:** 2026-02-12  
 
 This repository is designed as a theory-bounded, non-predictive simulation. It serves as a thinking instrument for exploring conditional behaviors under controlled assumptions, not as a real-world mirror.
 
