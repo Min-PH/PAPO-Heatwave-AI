@@ -17,11 +17,14 @@ It serves as a *thinking instrument* for exploring conditional behaviors under c
 | Results are comparative signals | Results are estimates or forecasts |
 
 
-Thinking Instrument vs. Real-World Exploration
+This repo intentionally prioritizes **clarity, interpretability, and structural transparency** over realism.
 
-* Simulations with tight boundaries and idealizations are useful for reasoning, comparison, and theory testing.
-* Simulations that try to mirror reality quickly become large, data-heavy, and hard to interpret.
-* This repo intentionally prioritizes clarity, interpretability, and structure over realism.
+Forks that move toward real-world exploration must add substantial complexity and document all departures explicitly.
+
+> **v1.1 Requirement:**  
+> Even as a thinking instrument, every valid PAPO-Heatwaves simulation must implement the core required components defined in CMDDS Step 4. These are non-negotiable regardless of trade-off position.
+
+---
 
 ## Idealizations
 
