@@ -35,6 +35,20 @@ Forks that move toward real-world exploration must add substantial complexity an
 
 These choices are deliberate to focus on mechanisms, not realistic outcomes.
 
+### v1.1 Clarification
+
+The following are **not idealizations**, but required specifications correcting prior underspecification:
+
+- Resource pools as exhaustible, location-aware objects  
+- Explicit `NULL` output when no opportunity is feasible  
+- Separated tactical and strategic feedback loops  
+- Normative prioritization rules under scarcity  
+- Defined equity metrics  
+
+These are architectural commitments, not simplifications.
+
+---
+
 ## Boundary Reductions
 
 * External systems are excluded or held constant
