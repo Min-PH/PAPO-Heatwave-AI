@@ -1,7 +1,7 @@
 # CMDDS — PAPO Heatwave Framework
 ## Conceptual Model Design Documentation for Simulation (CMDDS)
-**Version:** 1.0  
-**Date:** 2026-02-06  
+**Version:** 1.1  
+**Date:** 2026-02-12  
 **Author:** Min Wu  
 **Affiliation:** Zilber College of Public Health, University of Wisconsin-Milwaukee  
 **Contact / GitHub:** https://github.com/Min-PH/PAPO-Heatwave-AI
@@ -352,6 +352,7 @@ left open and are expected to reside in forks or downstream projects.
 v1.0 — Initial release; defines entities, inputs, logic, outputs, and temporal phases for PAPO–Heatwaves.
 
 v1.1 — Added simulation specific modules: resource pools, null output failure mode, human system handover, separated feedback loops, prioritization rules, equity metrics, bias injection, and explicit assumption/scope box.
+
 
 
 
