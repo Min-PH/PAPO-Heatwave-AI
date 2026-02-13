@@ -345,13 +345,14 @@ This repository provides the CMDDS artifact for PAPO heatwave applications. Simu
 left open and are expected to reside in forks or downstream projects.
 
 ## Related References
-- **Springer Textbook:** Min Wu. *AI for Public Health: PAPO–Heatwaves Chapter.* Springer, 2026. DOI: [Insert DOI]  
-- **SSRN Preprint:** [Insert Link]  
+- **Springer Textbook:** Wu, M. (2026). AI for Public Health. Springer. Forthcoming (April 2026). ISBN 978-3032158710.
+- **SSRN Preprint:** Wu, Min, PAPO: A Policy-Aware Personalized Opportunity Framework for Heatwave Public Health Interventions (February 08, 2026). Available at SSRN: https://ssrn.com/abstract=6198260 
 
 ## Changelog
 v1.0 — Initial release; defines entities, inputs, logic, outputs, and temporal phases for PAPO–Heatwaves.
 
 v1.1 — Added simulation specific modules: resource pools, null output failure mode, human system handover, separated feedback loops, prioritization rules, equity metrics, bias injection, and explicit assumption/scope box.
+
 
 
 
