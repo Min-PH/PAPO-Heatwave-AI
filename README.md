@@ -234,27 +234,18 @@ This section links to independent simulation projects inspired by the CMDDS fram
 If you develop a simulation based on this framework and would like it referenced here, please feel free to reach out.
 
 --------------------------------
-
-## Background and Conceptual Origins (Optional Reading)
-The PAPO framework and its application to heatwaves are described in:
-
-*	A Springer textbook chapter (DOI)
-*	An SSRN preprint (link)
-
-This repository provides a simulation-oriented CMDDS, not a reproduction of those publications.
-No prior reading is required to use or extend this work.
-________________________________________
 ## License and Attribution
 Please cite the PAPO framework when publishing derived simulations or analyses.
 See LICENSE for details.
 
 ## Related References
-- **Springer Textbook:** Min Wu. *AI for Public Health: PAPO–Heatwaves Chapter.* Springer, 2026. DOI: [Insert DOI]  
-- **SSRN Preprint:** [Insert Link]  
+- **Springer Textbook:** Wu, M. (2026). AI for Public Health. Springer. Forthcoming (April 2026). ISBN 978-3032158710.
+- **SSRN Preprint:** Wu, Min, PAPO: A Policy-Aware Personalized Opportunity Framework for Heatwave Public Health Interventions (February 08, 2026). Available at SSRN: https://ssrn.com/abstract=6198260 
 
 ## Changelog
 - **v1.0** — Initial release; defines entities, inputs, core logic, outputs, and temporal phases for PAPO–Heatwaves. Simulation-ready for developer adoption.
 - **v1.1** — Added simulation required components: resource pools, NULL output failure mode, human system handover specification, separated feedback loops, prioritization rules, equity metrics, bias injection recommendation, and explicit assumption/scope box. Now forkable for immediate simulation development.
+
 
 
 
