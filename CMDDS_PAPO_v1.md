@@ -6,6 +6,8 @@
 **Affiliation:** Zilber College of Public Health, University of Wisconsin-Milwaukee  
 **Contact / GitHub:** https://github.com/Min-PH/PAPO-Heatwave-AI
 
+**Cite:** Min Wu. CMDDDS for PAPO–Heatwave v1.1 – Conceptual Simulation Framework. Zenodo. DOI: 10.5281/zenodo.18637394
+
 ## Overview
 This document provides a developer-facing CMDDS for the Policy-Aware Personalized Opportunity (PAPO) 
 framework applied to heatwave response. It is written for AI developers, data scientists, and simulation 
@@ -352,6 +354,7 @@ left open and are expected to reside in forks or downstream projects.
 v1.0 — Initial release; defines entities, inputs, logic, outputs, and temporal phases for PAPO–Heatwaves.
 
 v1.1 — Added simulation specific modules: resource pools, null output failure mode, human system handover, separated feedback loops, prioritization rules, equity metrics, bias injection, and explicit assumption/scope box.
+
 
 
 
