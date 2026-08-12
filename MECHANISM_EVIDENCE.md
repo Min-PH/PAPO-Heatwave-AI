@@ -4,7 +4,6 @@
 
 ---
 
-**TL;DR**
 
 - PAPO has no field pilot yet, so this repo can't point to PAPO deployment data. What it can point to is decades of real heat-emergency history that already tested PAPO's *underlying idea* — personalized opportunity beats generic alerts — without calling it that.
 - Three independent, peer-reviewed or extensively documented historical cases support it. One independent reanalysis complicates it. Both are reported below.
