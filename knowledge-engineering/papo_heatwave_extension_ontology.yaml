@@ -1,0 +1,213 @@
+# ==============================================================================
+# PAPO-Heatwave Extension Ontology  (TBox / Schema-Level Only — no individuals)
+# ==============================================================================
+# Derived from: CMDDS — PAPO Heatwave Framework, v1.2 (Wu, M., 2026)
+#               Zenodo DOI: 10.5281/zenodo.18637394
+#               + Wu, Min. PAPO: A Policy-Aware Personalized Opportunity
+#               Framework for Heatwave Public Health Interventions.
+#               February 8, 2026. doi:10.2139/ssrn.6198260
+#               + Wu, M. Artificial Intelligence in Public Health.
+#               Springer Nature, 2026. Section 8.7 (PAPO Model /
+#               PAPO-heatwave AI application).
+#
+# This file is the HEAT-SPECIFIC DELTA only. It imports papo-core (the
+# hazard-agnostic PAPO middle-range theory ontology) and adds only the
+# classes, properties, and axioms that genuinely originate from the
+# heatwave application — concrete trigger types, concrete resource types,
+# a heat-specific environmental context, and the associated CMDDS-Step
+# provenance. It is not a standalone TBox: load it together with
+# papo_core_ontology.yaml (import closure) to get the full applied schema.
+# ==============================================================================
+
+ontology:
+  name: papo-heatwave-ontology
+  iri: "https://github.com/Min-PH/PAPO-Heatwave-AI/knowledge-engineering/papo-heatwave#"
+  version: "0.4.0"
+  status: "Hazard-specific extension — Stage 1b of a modular knowledge engineering pipeline"
+  imports:
+    - "https://github.com/Min-PH/PAPO-Heatwave-AI/knowledge-engineering/papo-core#"   # papo_core_ontology.yaml — load together
+  derivedFrom: >
+    CMDDS PAPO-Heatwave v1.2 (Wu, 2026), Steps 1-4, Step 3.5, Pre-Deployment
+    Checklist; cross-checked against Wu, Min. "PAPO: A Policy-Aware
+    Personalized Opportunity Framework for Heatwave Public Health
+    Interventions." February 8, 2026. doi:10.2139/ssrn.6198260, Section 3
+    (component inputs) and the Mr. Wu vignette (Section 4); and against
+    Wu, M. Artificial Intelligence in Public Health, Springer Nature, 2026,
+    Section 8.7 (PAPO Model / PAPO-heatwave AI application).
+  changelog:
+    - "0.2.0 — Initial heat-specific delta after splitting from the single-file ontology."
+    - "0.3.0 — Added indoorTemperatureCelsius (distinguishing individual-level dynamic exposure from scenario-level ambientTemperatureCelsius) and WellnessCheckPathway, both surfaced by the SSRN paper's component-input descriptions."
+    - "0.4.0 — Corrected SSRN citation to full form (Wu, Min., Feb 8 2026, doi:10.2139/ssrn.6198260). Added Springer textbook Section 8.7 as a third source. Added isAirConditionedVehicle (Table 8.7: institutional capacity includes AC-equipped bus counts) and uvIndexValue (Table 8.9: environmental alert inputs include UV index alongside heat advisories)."
+  description: >
+    Heatwave-specific specialization of PAPO-core: adds concrete subclasses
+    and data properties for heat alerts, heat-refuge resources, and heat
+    scenario context, each traceable to a specific CMDDS Step for governance
+    review and reproducibility.
+  relationshipToCore: >
+    Every class defined here subclasses (never duplicates) a papo-core
+    extension point. This file adds nothing that a hazard-agnostic reader
+    would need to understand PAPO's structure — that content lives in
+    papo_core_ontology.yaml.
+
+prefixes:
+  papoh: "https://github.com/Min-PH/PAPO-Heatwave-AI/knowledge-engineering/papo-heatwave#"
+  papoc: "https://github.com/Min-PH/PAPO-Heatwave-AI/knowledge-engineering/papo-core#"
+  owl:   "http://www.w3.org/2002/07/owl#"
+  rdfs:  "http://www.w3.org/2000/01/rdf-schema#"
+  xsd:   "http://www.w3.org/2001/XMLSchema#"
+
+# ------------------------------------------------------------------------------
+# CLASSES  (each subclasses a papo-core extension point)
+# ------------------------------------------------------------------------------
+classes:
+
+  HeatAlertTrigger:
+    subClassOf: papoc:PolicyActivationTrigger
+    comment: "A heat-specific signal (e.g., issuance of a heat advisory/warning) that activates Policy."
+    sourceRef: "CMDDS Step 3 §1 Policy Activation and Rule Evaluation (e.g., heat alerts, emergency declarations)"
+
+  CoolingCenterResource:
+    subClassOf: papoc:Resource
+    comment: "Facility-type resource with per-facility slot capacity, specialized for heat refuge."
+    sourceRef: "CMDDS Step 2 §Opportunity Resources (cooling centers)"
+
+  HeatEventContext:
+    subClassOf: papoc:EnvironmentalContext
+    comment: >
+      Heat-specific specialization of EnvironmentalContext: represents heat
+      severity and duration as scenario inputs. Explicitly NOT a weather
+      forecast, consistent with the CMDDS's stated non-goals.
+    sourceRef: "CMDDS Step 2 §Environmental Context; Step 1 Explicit Non-Goals"
+
+  WellnessCheckPathway:
+    subClassOf: papoc:EscalationPathway
+    comment: >
+      ★ Added 0.3.0. An in-person or human-outreach check invoked when
+      standard alerts or automated delivery are insufficient for a
+      heat-exposed individual/segment.
+    sourceRef: "CMDDS Step 3 §4 (in-person checks); SSRN Section 3 item 3 (wellness checks)"
+
+# ------------------------------------------------------------------------------
+# DATA PROPERTIES  (heat-specific attributes)
+# ------------------------------------------------------------------------------
+dataProperties:
+
+  ambientTemperatureCelsius:
+    domain: HeatEventContext
+    range: xsd:float
+    comment: "Scenario-level ambient temperature input."
+    sourceRef: "CMDDS Step 2 §Environmental Context (heat severity)"
+
+  heatIndexValue:
+    domain: HeatEventContext
+    range: xsd:float
+    comment: "Scenario-level heat index (combines temperature and humidity) input."
+    sourceRef: "CMDDS Step 2 §Environmental Context (heat severity)"
+
+  eventDurationHours:
+    domain: HeatEventContext
+    range: xsd:nonNegativeInteger
+    comment: "Scenario-level duration of the heat event."
+    sourceRef: "CMDDS Step 2 §Environmental Context (heat duration)"
+
+  uvIndexValue:
+    domain: HeatEventContext
+    range: xsd:float
+    comment: "★ Added 0.4.0. Scenario-level UV index input, alongside ambient temperature and heat index."
+    sourceRef: "Springer textbook Table 8.9 (environmental alert example inputs: heat advisories, UV index, heat risk indices)"
+
+  hasAirConditioning:
+    domain: papoc:PopulationSegment
+    range: xsd:boolean
+    comment: "Whether a segment's housing has functional air conditioning access."
+    sourceRef: "CMDDS Step 2 §Individual/Household Inputs (e.g., AC access)"
+
+  indoorTemperatureCelsius:
+    domain: papoc:RiskProfile
+    range: xsd:float
+    comment: >
+      ★ Added 0.3.0. Individual/segment-level dynamic exposure reading —
+      distinct from HeatEventContext's ambientTemperatureCelsius, which is
+      the scenario-level outdoor input. The SSRN paper lists indoor
+      temperature explicitly as a real-time contextual signal feeding the
+      Personalized Opportunity Engine, separate from ambient scenario data.
+    sourceRef: "SSRN Section 3 item 2 (Personalized Opportunity Engine: real-time contextual signals — indoor temperature)"
+
+  isAirConditionedVehicle:
+    domain: papoc:TransportResource
+    range: xsd:boolean
+    comment: >
+      ★ Added 0.4.0. Whether a transport unit has functional air
+      conditioning — a resource-level AC attribute distinct from
+      hasAirConditioning, which is about a PopulationSegment's housing.
+    sourceRef: "Springer textbook Table 8.7 (institutional capacity: 'numbers of AC-equipped buses')"
+
+# ------------------------------------------------------------------------------
+# AXIOMS  (restate + extend the relevant papo-core disjoint groups)
+# ------------------------------------------------------------------------------
+axioms:
+
+  disjointClasses:
+    - group: PolicyActivationTriggerTypes
+      members: [papoc:EmergencyDeclarationTrigger, HeatAlertTrigger]
+      note: >
+        Extends papo-core's single-member PolicyActivationTrigger placeholder
+        now that a heat-specific sibling exists.
+      sourceRef: "CMDDS Step 3 §1"
+
+    - group: ResourceTypes
+      members: [papoc:TransportResource, papoc:VolunteerResource, CoolingCenterResource]
+      note: >
+        Restates papo-core's ResourceTypes group (papoc:TransportResource,
+        papoc:VolunteerResource) with the heat-specific CoolingCenterResource
+        included. This group supersedes the core file's provisional two-member
+        version wherever this extension is loaded.
+      sourceRef: "CMDDS Step 2 §Resource Pools (cooling centers, transport, volunteers)"
+
+# ------------------------------------------------------------------------------
+# DESIGN NOTES
+# ------------------------------------------------------------------------------
+designNotes: >
+  1. This file deliberately contains almost nothing — that is the point.
+     Once the theory-level structure moved to papo-core, what was left as
+     genuinely heatwave-specific reduced to a small set of classes, data
+     properties, and two restated disjointness groups. Everything else in
+     the original single-file ontology (governance restrictions, the five
+     escalation trigger types, prioritization rules, equity metrics, the
+     underserved-population hierarchy, feedback loops) turned out to be
+     theory-level, not heatwave-specific, and now lives in papo-core.
+  2. Every class/property here keeps its CMDDS Step-level (or SSRN Section-
+     level) sourceRef, since that provenance is genuinely specific to this
+     operationalization and matters for MOKG-PH governance review and
+     reproducibility.
+  3. Cross-checking against the SSRN founding paper (★ 0.3.0) mostly
+     confirmed the existing split rather than overturning it — Section 6
+     explicitly states PAPO "offers a generalizable approach ... beyond
+     heatwaves," which is direct textual support for keeping this file thin.
+     It did surface two genuine gaps: indoorTemperatureCelsius (the paper
+     distinguishes individual-level dynamic exposure from scenario-level
+     ambient conditions, which papo-core's single EnvironmentalContext
+     extension point didn't capture) and WellnessCheckPathway (named
+     explicitly in both source documents as a heat-response escalation
+     action, previously only implicit in EscalationPathway's comment text).
+  4. Future hazard extensions (wildfire smoke, flooding, cold snap) should
+     follow this same pattern: subclass papo-core's extension points, add
+     only the hazard-specific delta, and restate (not duplicate) any
+     papo-core disjointness group they extend.
+  5. This file has no meaning on its own — always load it together with
+     papo_core_ontology.yaml.
+  6. (★ 0.4.0) The Springer textbook's Section 8.7 is the most detailed
+     source yet, but most of its additional content (specific AI models,
+     ML techniques, named tasks per component) is implementation-layer
+     and was deliberately left out — see papo-core's design note #8. What
+     it did add here were two genuinely heat-specific attributes not
+     mentioned in either prior source: UV index as a scenario input, and
+     AC-equipped-vehicle status as a resource-level (not just housing-level)
+     attribute. Its two new vulnerable-population categories (outdoor/
+     manual laborers, unhoused population) were judged NOT heat-specific —
+     both generalize across hazard types — so they were added to
+     papo-core's VulnerablePopulationSegment instead of here.
+  7. (★ 0.4.0) The SSRN citation in this file's header and derivedFrom was
+     corrected to the author-supplied canonical form (Wu, Min., February 8,
+     2026, doi:10.2139/ssrn.6198260), replacing an earlier paraphrase that
+     used an SSRN abstract URL instead of the DOI.

@@ -1,0 +1,787 @@
+# ==============================================================================
+# PAPO-Core Ontology  (TBox / Schema-Level Only — no individuals)
+# ==============================================================================
+# Formalizes the Policy-Aware Personalized Opportunity (PAPO) middle-range
+# theory itself, independent of any single hazard application.
+#
+# This file is intentionally HAZARD-AGNOSTIC: it contains no references to
+# heatwaves, cooling centers, heat alerts, or any other hazard-specific
+# vocabulary, and no citations to any single application document. It is
+# designed to be imported and extended by hazard-specific ontologies
+# (e.g., papo-heatwave, or future papo-wildfire-smoke, papo-flood,
+# papo-cold-snap extensions) that add concrete, hazard-specific classes,
+# properties, and axioms without modifying this file.
+# ==============================================================================
+
+ontology:
+  name: papo-core-ontology
+  iri: "https://github.com/Min-PH/PAPO-Heatwave-AI/knowledge-engineering/papo-core#"
+  version: "0.3.0"
+  status: "Hazard-agnostic core — Stage 1 of a modular knowledge engineering pipeline"
+  derivedFrom: >
+    The Policy-Aware Personalized Opportunity (PAPO) middle-range theory
+    (Wu), synthesized across the framework's founding architecture
+    description, its CMDDS operational specification, and its treatment
+    in Wu's public-health AI textbook. This file formalizes theory-level
+    structure only; it deliberately omits references to any specific
+    hazard-application document, so that it remains reusable across
+    hazard types.
+  changelog:
+    - "0.1.0 — Initial hazard-agnostic core, extracted by generalizing a heatwave-specific CMDDS document."
+    - "0.2.0 — Added the SystemComponent architecture layer (PolicyInputLayer, PersonalizedOpportunityEngine, OpportunityDeliveryInterface, FeedbackLoopModule) after cross-referencing PAPO's founding paper, which specifies this four-component architecture in fully hazard-agnostic terms. Added hasRiskProfile and attributeTemporality to close two gaps that reading surfaced."
+    - "0.3.0 — Cross-checked against the textbook chapter presenting PAPO's full architecture (component-by-component input tables, AI-task descriptions). Confirmed the domain/architecture split rather than overturning it — the textbook's own 8.7.1 (generic PAPO model) vs. 8.7.2 (PAPO-heatwave AI) split mirrors this file's core/extension boundary. Added two DeliveryChannel subclasses (InstitutionalChannel, InformalNetworkChannel), two VulnerablePopulationSegment subclasses (OutdoorOccupationalExposureSegment, UnhousedSegment — both generalize beyond heat), riskTier, and revised attributeTemporality's comment after finding the textbook uses a more granular four-way data-provenance scheme than CMDDS's three-way one — noted as a cross-document terminology discrepancy rather than silently resolved."
+  description: >
+    Abstract schema for the translation of institutional policy into
+    personalized, feasible, resource-aware micro-opportunities for
+    population segments under real-world constraints (timing, capacity,
+    access, equity) — independent of hazard type.
+  explicitlyOutOfScope: >
+    Clinical outcome prediction, hazard physiological/injury-mechanism
+    modeling, environmental/weather forecasting, and automated policy
+    generation are out of scope for this core ontology. Hazard-specific
+    extensions should preserve this boundary unless explicitly justified.
+
+prefixes:
+  papoc: "https://github.com/Min-PH/PAPO-Heatwave-AI/knowledge-engineering/papo-core#"
+  owl:   "http://www.w3.org/2002/07/owl#"
+  rdfs:  "http://www.w3.org/2000/01/rdf-schema#"
+  xsd:   "http://www.w3.org/2001/XMLSchema#"
+
+# ------------------------------------------------------------------------------
+# EXTENSION POINTS
+# ------------------------------------------------------------------------------
+# Classes explicitly designed to be specialized by hazard-specific ontologies.
+# Extensions should subclass these rather than inventing parallel top-level
+# classes, so that hazard-specific TBoxes remain interoperable through papoc:.
+# ------------------------------------------------------------------------------
+extensionPoints:
+  - class: papoc:PolicyActivationTrigger
+    guidance: "Add hazard-specific alert/warning trigger subclasses (e.g., a heat alert, a flood warning)."
+  - class: papoc:Resource
+    guidance: "Add hazard-specific resource subclasses (e.g., a heat-refuge facility, a sandbag depot)."
+  - class: papoc:EnvironmentalContext
+    guidance: "Add a hazard-specific context subclass carrying hazard-specific severity/duration data properties."
+  - class: papoc:PopulationSegment
+    guidance: "Add hazard-specific data properties on existing segments (e.g., housing-cooling access) without new top-level classes where possible."
+
+# ------------------------------------------------------------------------------
+# CLASSES
+# ------------------------------------------------------------------------------
+classes:
+
+  # --- Core requested classes -------------------------------------------------
+  Policy:
+    subClassOf: owl:Thing
+    comment: >
+      Institutional rules, eligibility thresholds, priorities, and
+      operational constraints defined by public health / emergency
+      management / service-provider systems that govern hazard-emergency
+      response. Abstract: does not encode any specific jurisdiction's policy.
+
+  Opportunity:
+    subClassOf: owl:Thing
+    comment: >
+      A concrete, personalized, time-bound, resource-aware micro-action
+      generated by translating an active Policy through a PopulationSegment's
+      RiskProfile and available Resources. May be null (see NullOpportunity).
+
+  PopulationSegment:
+    subClassOf: owl:Thing
+    comment: >
+      An abstract grouping of individuals/households sharing vulnerability,
+      access, or exposure characteristics relevant to hazard response.
+      Not an individual — a class of recipients.
+
+  # --- Supporting top-level classes -------------------------------------------
+  Resource:
+    subClassOf: owl:Thing
+    comment: >
+      An exhaustible, location-aware asset consumed by Opportunity delivery
+      (e.g., facility slots, vehicles, volunteer availability).
+
+  EnvironmentalContext:
+    subClassOf: owl:Thing
+    comment: >
+      Abstract representation of a hazard event's severity and duration as a
+      scenario input — explicitly NOT a forecast. Hazard-specific extensions
+      should subclass this with concrete severity/duration data properties.
+
+  Trigger:
+    subClassOf: owl:Thing
+    comment: >
+      An abstract signal or event that changes system state — either by
+      activating Policy, or by forcing escalation when an Opportunity
+      cannot be generated. See PolicyActivationTrigger and EscalationTrigger.
+
+  RiskProfile:
+    subClassOf: owl:Thing
+    comment: >
+      Abstract combination of baseline vulnerability and dynamic exposure
+      used to assess feasibility and prioritize response. Distinct from
+      clinical prediction, which is explicitly out of scope.
+
+  DeliveryChannel:
+    subClassOf: owl:Thing
+    comment: "Abstract medium through which an Opportunity is communicated or executed."
+
+  InstitutionalChannel:
+    subClassOf: DeliveryChannel
+    comment: >
+      ★ Added 0.3.0. A channel operated directly by the responding
+      institution or its designated workers (e.g., app, SMS, voice line,
+      community health worker visit).
+
+  InformalNetworkChannel:
+    subClassOf: DeliveryChannel
+    comment: >
+      ★ Added 0.3.0. A channel mediated through an individual's existing
+      informal social network (e.g., caregiver, neighbor, community group)
+      acting as a secondary outreach agent when institutional channels are
+      insufficient.
+
+  EscalationPathway:
+    subClassOf: owl:Thing
+    comment: >
+      Abstract response route invoked when delivery fails or an Opportunity
+      is null (e.g., an in-person check).
+
+  FeedbackLoop:
+    subClassOf: owl:Thing
+    comment: >
+      Abstract mechanism by which uptake, non-uptake, and utilization data
+      revise system state. Two temporally distinct kinds must not be
+      conflated (see subclasses).
+
+  PrioritizationRule:
+    subClassOf: owl:Thing
+    comment: >
+      A normative (non-derivable-from-risk-alone) rule superimposed on PAPO
+      logic when demand exceeds supply. Governance, not optimization.
+
+  EquityMetric:
+    subClassOf: owl:Thing
+    comment: >
+      A normative commitment defining how fairness is measured across
+      PopulationSegments. Must be selected before any simulation run.
+
+  GovernanceApproval:
+    subClassOf: owl:Thing
+    comment: >
+      An abstract sign-off artifact required before a normative decision
+      (equity metric selection, prioritization rule, human-system handover
+      boundary, bias threshold) may take effect.
+
+  BiasInjectionTest:
+    subClassOf: owl:Thing
+    comment: >
+      An abstract audit construct: injects historical bias into an opportunity
+      ranking/eligibility process and measures the resulting disparity delta.
+
+  # --- Policy / Trigger subclasses --------------------------------------------
+  PolicyActivationTrigger:
+    subClassOf: Trigger
+    comment: "A Trigger that moves a Policy from inactive to active state."
+
+  EmergencyDeclarationTrigger:
+    subClassOf: PolicyActivationTrigger
+    comment: "Institutional declaration of an emergency in response to a hazard event of any type."
+
+  EscalationTrigger:
+    subClassOf: Trigger
+    comment: >
+      A Trigger representing one of the required failure modes that forces
+      escalation when no feasible Opportunity can be generated.
+
+  ResourceExhaustionTrigger:
+    subClassOf: EscalationTrigger
+
+  GeographicInaccessibilityTrigger:
+    subClassOf: EscalationTrigger
+
+  PolicyConflictTrigger:
+    subClassOf: EscalationTrigger
+
+  NonResponseTrigger:
+    subClassOf: EscalationTrigger
+
+  CascadingDepletionTrigger:
+    subClassOf: EscalationTrigger
+
+  # --- Opportunity subclass ----------------------------------------------------
+  NullOpportunity:
+    subClassOf: Opportunity
+    equivalentClass: "Opportunity and (isNullOutput value true)"
+    comment: >
+      The required architectural "no feasible opportunity" outcome of the
+      PAPO translation logic. Not an optional extension — an implementation
+      that cannot produce this state has not implemented PAPO.
+
+  # --- PopulationSegment subclasses --------------------------------------------
+  VulnerablePopulationSegment:
+    subClassOf: PopulationSegment
+    comment: "Segment characterized by elevated baseline hazard-health risk factors (e.g., chronic conditions, mobility limitations)."
+
+  OutdoorOccupationalExposureSegment:
+    subClassOf: VulnerablePopulationSegment
+    comment: >
+      ★ Added 0.3.0. Individuals whose occupation (e.g., manual or outdoor
+      labor) entails elevated, sustained hazard exposure relative to
+      indoor populations — a vulnerability driven by work conditions
+      rather than health status or housing.
+
+  UnhousedSegment:
+    subClassOf: VulnerablePopulationSegment
+    comment: >
+      ★ Added 0.3.0. Individuals lacking stable housing, facing elevated
+      direct exposure and reduced access to protective infrastructure
+      (shelter, cooling/heating, refuge) across hazard types.
+
+  UnderservedPopulationSegment:
+    subClassOf: PopulationSegment
+    comment: >
+      Segment systematically under-reached by digital, majority-language, or
+      urban-resource-dense delivery channels. Required modeling nodes for a
+      strategic feedback loop to detect systematic exclusion.
+
+  RuralIsolatedSegment:
+    subClassOf: UnderservedPopulationSegment
+    comment: "Requires cross-zone resource access."
+
+  LimitedLanguageProficiencySegment:
+    subClassOf: UnderservedPopulationSegment
+    comment: "Requires translation / culturally competent outreach pathways."
+
+  NoDigitalAccessSegment:
+    subClassOf: UnderservedPopulationSegment
+    comment: "Requires non-app, non-text delivery channels (voice, in-person, community intermediary)."
+
+  # --- Resource subclasses ------------------------------------------------------
+  TransportResource:
+    subClassOf: Resource
+    comment: "Vehicle-fleet resource with range and round-trip-time constraints."
+
+  VolunteerResource:
+    subClassOf: Resource
+    comment: "Human-network resource with response probability and availability windows."
+
+  # --- FeedbackLoop subclasses ---------------------------------------------------
+  TacticalFeedbackLoop:
+    subClassOf: FeedbackLoop
+    comment: "Real-time reallocation of existing resources (minutes to hours)."
+
+  StrategicFeedbackLoop:
+    subClassOf: FeedbackLoop
+    comment: >
+      Post-season aggregation revising eligibility criteria, budget, and
+      vulnerability definitions (months to years). Must include explicit
+      pathways for correcting systematic under-reach of UnderservedPopulationSegment.
+
+  # --- PrioritizationRule subclasses ----------------------------------------------
+  ClinicalRiskOnlyRule:
+    subClassOf: PrioritizationRule
+    comment: "Priority based on baseline risk factors + exposure; no barrier weighting."
+
+  EquityWeightedRule:
+    subClassOf: PrioritizationRule
+    comment: "Baseline risk weighted by a barrier index (e.g., lack of protective resources, mobility limitations, resource deserts)."
+
+  RandomLotteryRule:
+    subClassOf: PrioritizationRule
+    comment: "Equal probability among eligible individuals."
+
+  EasiestFirstRule:
+    subClassOf: PrioritizationRule
+    comment: "Minimizes resource consumption per intervention."
+
+  WorstOffFirstRule:
+    subClassOf: PrioritizationRule
+    comment: "Maximizes urgency (e.g., greatest exposure severity or longest exposure duration)."
+
+  # --- EquityMetric subclasses -------------------------------------------------
+  EqualAllocationMetric:
+    subClassOf: EquityMetric
+    comment: "Same proportion served across groups."
+
+  EqualOutcomesMetric:
+    subClassOf: EquityMetric
+    comment: "Post-event status equalized (or proxy) across groups."
+
+  PrioritizingMetric:
+    subClassOf: EquityMetric
+    comment: "Weighted benefit allocation favoring worse-off individuals."
+
+  SufficientMetric:
+    subClassOf: EquityMetric
+    comment: "Everyone reaches a minimum safety threshold (e.g., access to a critical protective resource within a defined time window)."
+
+  # --- System architecture layer (★ added 0.2.0, from PAPO's founding paper) ---
+  # These classes formalize PAPO's own stated system architecture — four
+  # interlinked functional modules — as distinct from the domain concepts
+  # above that those modules operate over. E.g., PolicyInputLayer is the
+  # component that encodes/hosts Policy content; it is not itself a Policy.
+  SystemComponent:
+    subClassOf: owl:Thing
+    comment: >
+      An abstract functional module of the PAPO system architecture, as
+      distinct from the domain concepts (Policy, Opportunity, etc.) that
+      modules operate over. PAPO's architecture comprises exactly four
+      such components, interlinked in a closed cycle.
+
+  PolicyInputLayer:
+    subClassOf: SystemComponent
+    comment: >
+      Encodes institutional intent — both static elements (e.g., standing
+      eligibility rules, protection priorities) and dynamic signals
+      (e.g., real-time availability updates) — as Policy content.
+
+  PersonalizedOpportunityEngine:
+    subClassOf: SystemComponent
+    comment: >
+      Combines a PopulationSegment's RiskProfile (baseline vulnerability +
+      dynamic exposure/context) with active Policy constraints to compute
+      feasible, individualized Opportunity candidates.
+
+  OpportunityDeliveryInterface:
+    subClassOf: SystemComponent
+    comment: >
+      Operationalizes non-null Opportunities via one or more DeliveryChannels
+      through semi-autonomous, human-supervised workflows.
+
+  FeedbackLoopModule:
+    subClassOf: SystemComponent
+    comment: >
+      Orchestrates FeedbackLoop cycles (tactical and/or strategic) and
+      routes aggregated, privacy-preserving results back to the
+      PolicyInputLayer, closing the four-component cycle.
+
+# ------------------------------------------------------------------------------
+# OBJECT PROPERTIES
+# ------------------------------------------------------------------------------
+objectProperties:
+
+  triggers:
+    domain: [Trigger, EnvironmentalContext]
+    range: Policy
+    characteristics: [Irreflexive, Asymmetric]
+    inverseOf: triggeredBy
+    comment: "A Trigger or EnvironmentalContext event moves a Policy from inactive to active."
+
+  targets:
+    domain: Opportunity
+    range: PopulationSegment
+    inverseOf: targetedBy
+    comment: "An Opportunity is personalized toward a PopulationSegment."
+
+  mitigates:
+    domain: Opportunity
+    range: RiskProfile
+    inverseOf: mitigatedBy
+    comment: "An Opportunity is intended to reduce an assessed RiskProfile (not a clinical outcome claim)."
+
+  generates:
+    domain: Policy
+    range: Opportunity
+    inverseOf: generatedBy
+    comment: "The core PAPO translation function: an active Policy generates (or fails to generate) an Opportunity."
+
+  requires:
+    domain: Opportunity
+    range: Resource
+    inverseOf: requiredBy
+    comment: "An Opportunity depends on one or more Resources for feasibility."
+
+  allocates:
+    domain: Policy
+    range: Resource
+    comment: "A Policy governs/distributes Resource inventories."
+
+  exhausts:
+    domain: Opportunity
+    range: Resource
+    disjointWith: replenishes
+    comment: "Delivering an Opportunity reduces Resource availability."
+
+  replenishes:
+    domain: Opportunity
+    range: Resource
+    disjointWith: exhausts
+    comment: "Completion of an Opportunity's underlying trip/visit restores Resource availability."
+
+  specifies:
+    domain: Policy
+    range: [PrioritizationRule, EquityMetric]
+    comment: >
+      A Policy adopts a specific PrioritizationRule and EquityMetric
+      (union range; each requires GovernanceApproval before simulation).
+
+  prioritizes:
+    domain: PrioritizationRule
+    range: PopulationSegment
+    comment: "A PrioritizationRule ranks PopulationSegments under resource scarcity."
+
+  deliversVia:
+    domain: Opportunity
+    range: DeliveryChannel
+    comment: "The channel through which a non-null Opportunity is communicated/executed."
+
+  escalatesTo:
+    domain: EscalationTrigger
+    range: EscalationPathway
+    comment: "An EscalationTrigger routes to a required EscalationPathway (e.g., NullOpportunity handling)."
+
+  feedsInto:
+    domain: FeedbackLoop
+    range: Policy
+    comment: "Aggregated, privacy-preserving feedback revises Policy state or parameters."
+
+  constrains:
+    domain: Resource
+    range: Opportunity
+    comment: "Resource capacity/availability limits which Opportunities are feasible."
+
+  approves:
+    domain: GovernanceApproval
+    range: [Policy, PrioritizationRule, EquityMetric]
+    comment: "GovernanceApproval authorizes a normative Policy-layer decision to take effect."
+
+  audits:
+    domain: BiasInjectionTest
+    range: PrioritizationRule
+    comment: "A BiasInjectionTest evaluates a PrioritizationRule (or ranking logic) for disparity."
+
+  hasRiskProfile:
+    domain: PopulationSegment
+    range: RiskProfile
+    inverseOf: riskProfileOf
+    comment: >
+      ★ Added 0.2.0. A PopulationSegment is characterized by an associated
+      RiskProfile. Closes a gap: mitigates and targets previously left
+      PopulationSegment and RiskProfile connected only indirectly, through
+      Opportunity.
+
+  # --- System-component relations (★ added 0.2.0) ---
+  encodes:
+    domain: PolicyInputLayer
+    range: Policy
+    comment: "The Policy Input Layer encodes institutional intent as Policy content."
+
+  computes:
+    domain: PersonalizedOpportunityEngine
+    range: Opportunity
+    comment: "The engine computes candidate Opportunity instances from RiskProfile and Policy constraints."
+
+  assesses:
+    domain: PersonalizedOpportunityEngine
+    range: RiskProfile
+    comment: "The engine assesses RiskProfile by combining baseline vulnerability with dynamic context."
+
+  operationalizes:
+    domain: OpportunityDeliveryInterface
+    range: Opportunity
+    comment: "The interface operationalizes (executes delivery of) a non-null Opportunity."
+
+  employs:
+    domain: OpportunityDeliveryInterface
+    range: DeliveryChannel
+    comment: >
+      The interface employs a DeliveryChannel at the component/capability
+      level — distinct from deliversVia, which records the channel actually
+      used for a given Opportunity instance.
+
+  orchestrates:
+    domain: FeedbackLoopModule
+    range: FeedbackLoop
+    comment: "The module orchestrates Tactical and/or Strategic FeedbackLoop cycles."
+
+  informs:
+    domain: FeedbackLoopModule
+    range: PolicyInputLayer
+    comment: "Aggregated feedback closes the loop by informing the Policy Input Layer."
+
+# ------------------------------------------------------------------------------
+# DATA PROPERTIES
+# ------------------------------------------------------------------------------
+dataProperties:
+
+  riskThreshold:
+    domain: [Policy, RiskProfile]
+    range: xsd:float
+    comment: "Eligibility/escalation cut-point applied to a RiskProfile score."
+
+  capacity:
+    domain: Resource
+    range: xsd:nonNegativeInteger
+    comment: "Maximum concurrent throughput of a Resource (slots, fleet size, volunteer count)."
+
+  utilizationRate:
+    domain: Resource
+    range: xsd:float
+    comment: "Proportion of capacity currently allocated. Conceptual range [0.0, 1.0]."
+
+  disparityDelta:
+    domain: BiasInjectionTest
+    range: xsd:float
+    comment: "Measured gap in opportunity/eligibility rates between groups under biased ranking."
+
+  governanceApprovedThreshold:
+    domain: BiasInjectionTest
+    range: xsd:float
+    comment: "The disparity delta ceiling a deployment must meet, per GovernanceApproval."
+
+  activationDelayHours:
+    domain: PolicyActivationTrigger
+    range: xsd:nonNegativeInteger
+    comment: "Simulated delay between an activation signal and Policy activation, used for timing-sensitivity testing."
+
+  eligibilityThreshold:
+    domain: Policy
+    range: xsd:float
+    comment: "Abstract cut-point defining who qualifies under a Policy's rules."
+
+  responseProbability:
+    domain: VolunteerResource
+    range: xsd:float
+    comment: "Likelihood a volunteer unit responds when allocated."
+
+  isNullOutput:
+    domain: Opportunity
+    range: xsd:boolean
+    comment: "True iff no feasible opportunity could be generated (defines NullOpportunity)."
+
+  timeBoundHours:
+    domain: Opportunity
+    range: xsd:nonNegativeInteger
+    comment: "Window within which a non-null Opportunity remains valid/actionable."
+
+  equityWeight:
+    domain: PrioritizationRule
+    range: xsd:float
+    comment: "Weight assigned to barrier/equity factors relative to baseline risk, where applicable."
+
+  requiresGovernanceSignOff:
+    domain: [PrioritizationRule, EquityMetric, Policy]
+    range: xsd:boolean
+    comment: "True for normative decisions requiring documented governance approval before deployment."
+
+  distanceToNearestResource:
+    domain: PopulationSegment
+    range: xsd:float
+    comment: "Abstract geographic isolation indicator (e.g., distance or time to nearest critical resource)."
+
+  hasDigitalAccess:
+    domain: PopulationSegment
+    range: xsd:boolean
+    comment: "Whether a segment is reachable via app/text delivery channels."
+
+  languageProficiencyLevel:
+    domain: PopulationSegment
+    range: xsd:string
+    comment: "Abstract categorical indicator (conceptually enumerated, not fixed here)."
+
+  attributeTemporality:
+    domain: [Policy, Resource, RiskProfile]
+    range: xsd:string
+    comment: >
+      Conceptually enumerated; source documents disagree on granularity —
+      flagged here rather than silently resolved. CMDDS uses a three-way
+      scheme (static / contextual / dynamic). The textbook chapter uses a
+      four-way scheme across its input tables (static / streaming /
+      self-report / event-driven). Left as an open xsd:string rather than
+      a fixed enumeration so either scheme (or a reconciliation of both)
+      can populate it without a further schema change.
+
+  riskTier:
+    domain: RiskProfile
+    range: xsd:string
+    comment: >
+      ★ Added 0.3.0. Discrete/ordinal risk classification (e.g., a
+      categorical tier such as "high"), distinct from the continuous
+      riskThreshold cut-point. The textbook's risk-stratification
+      examples output a tier, not just a score.
+
+  selfReportedDistressReported:
+    domain: RiskProfile
+    range: xsd:boolean
+    comment: "★ Added 0.2.0. Whether the segment has self-reported protective-behavior difficulty or distress relevant to current exposure."
+
+# ------------------------------------------------------------------------------
+# AXIOMS
+# ------------------------------------------------------------------------------
+axioms:
+
+  disjointClasses:
+    - group: CoreOntologicalCategories
+      members:
+        - Policy
+        - Opportunity
+        - PopulationSegment
+        - Resource
+        - EnvironmentalContext
+        - Trigger
+        - RiskProfile
+        - DeliveryChannel
+        - EscalationPathway
+        - FeedbackLoop
+        - PrioritizationRule
+        - EquityMetric
+        - GovernanceApproval
+        - BiasInjectionTest
+        - SystemComponent
+      note: >
+        All fifteen top-level classes are pairwise mutually exclusive
+        (OWL AllDisjointClasses semantics). Illustrative pairs: Policy
+        disjoint from Resource; Opportunity disjoint from PopulationSegment;
+        Policy disjoint from Opportunity. SystemComponent (★ added 0.2.0) is
+        disjoint from the other fourteen because it belongs to a different
+        ontological kind — an architectural module, not a domain concept a
+        module reasons about.
+
+    - group: SystemComponentTypes
+      members: [PolicyInputLayer, PersonalizedOpportunityEngine, OpportunityDeliveryInterface, FeedbackLoopModule]
+      note: "★ Added 0.2.0. PAPO's four architectural components are pairwise disjoint and, per the founding paper, form a closed cycle (see the encodes/computes/operationalizes/orchestrates/informs object properties)."
+
+    - group: TriggerSubtypes
+      members: [PolicyActivationTrigger, EscalationTrigger]
+
+    - group: EscalationTriggerTypes
+      members:
+        - ResourceExhaustionTrigger
+        - GeographicInaccessibilityTrigger
+        - PolicyConflictTrigger
+        - NonResponseTrigger
+        - CascadingDepletionTrigger
+      note: "The five required null-output failure modes recognized by PAPO's escalation logic."
+
+    - group: FeedbackLoopTypes
+      members: [TacticalFeedbackLoop, StrategicFeedbackLoop]
+      note: "Conflating these loops risks instability or policy inertia."
+
+    - group: PrioritizationRuleTypes
+      members:
+        - ClinicalRiskOnlyRule
+        - EquityWeightedRule
+        - RandomLotteryRule
+        - EasiestFirstRule
+        - WorstOffFirstRule
+      note: "Exactly one is selected for deployment via GovernanceApproval; simulation should compare ≥2 candidates before selection."
+
+    - group: EquityMetricTypes
+      members:
+        - EqualAllocationMetric
+        - EqualOutcomesMetric
+        - PrioritizingMetric
+        - SufficientMetric
+
+    - group: ResourceTypes
+      members: [TransportResource, VolunteerResource]
+      note: >
+        Provisional — this is an open disjoint set. Hazard-specific
+        extensions (e.g., papo-heatwave) add further disjoint Resource
+        subclasses and must restate this group including their additions.
+
+    - group: DeliveryChannelTypes
+      members: [InstitutionalChannel, InformalNetworkChannel]
+      note: >
+        ★ Added 0.3.0. Provisional — like ResourceTypes, this is an open
+        disjoint set that hazard-specific extensions may add further
+        disjoint DeliveryChannel subclasses to.
+
+  deliberatelyNotDisjoint:
+    - group: UnderservedPopulationSegmentTypes
+      members: [RuralIsolatedSegment, LimitedLanguageProficiencySegment, NoDigitalAccessSegment]
+      note: >
+        Intentionally NOT declared disjoint. An individual-membership instance
+        may belong to more than one underserved segment simultaneously
+        (intersectional exclusion); PAPO's equity design principles treat
+        this overlap as substantively meaningful, so forcing disjointness
+        here would misrepresent real-world reachability patterns.
+
+    - group: VulnerablePopulationSegmentTypes
+      members: [OutdoorOccupationalExposureSegment, UnhousedSegment]
+      note: >
+        ★ Added 0.3.0. Intentionally NOT declared disjoint, for the same
+        reason as UnderservedPopulationSegmentTypes — an individual can be
+        both an outdoor laborer and unhoused simultaneously, and either or
+        both can also co-occur with UnderservedPopulationSegment membership
+        (VulnerablePopulationSegment and UnderservedPopulationSegment are
+        themselves left non-disjoint by omission, for the same reason).
+
+  equivalentClasses:
+    - class: NullOpportunity
+      equivalentTo: "Opportunity and (isNullOutput value true)"
+      note: "Formalizes null output as a required architectural element of Opportunity generation, not a separate concept."
+
+  subClassOfRestrictions:
+    - class: Policy
+      restriction: "Policy SubClassOf (specifies some EquityMetric)"
+      note: "Equity metric pre-selection is a required governance action before any simulation run."
+    - class: Policy
+      restriction: "Policy SubClassOf (specifies some PrioritizationRule)"
+      note: "A deployed Policy must adopt a governance-approved PrioritizationRule under scarcity."
+    - class: Opportunity
+      restriction: "Opportunity SubClassOf (requires some Resource) or (isNullOutput value true)"
+      note: "An Opportunity is either resource-backed and feasible, or explicitly null."
+    - class: EscalationTrigger
+      restriction: "EscalationTrigger SubClassOf (escalatesTo some EscalationPathway)"
+      note: "Every escalation trigger type must resolve to a defined pathway."
+
+  propertyDisjointness:
+    - properties: [exhausts, replenishes]
+      note: "A single delivery event cannot simultaneously exhaust and replenish the same Resource."
+
+# ------------------------------------------------------------------------------
+# DESIGN NOTES (knowledge-engineering rationale, not part of the formal schema)
+# ------------------------------------------------------------------------------
+designNotes: >
+  1. This file is the reusable "PAPO-core" layer: fifteen disjoint top-level
+     classes mirroring the theory's own separation of concerns (policy,
+     opportunity, population, resource, context/trigger, governance/audit,
+     system architecture), with no wording, examples, or citations tied to
+     any single hazard.
+  0. (★ 0.2.0) The ontology now has two distinct layers that were previously
+     conflated by omission: a DOMAIN layer (Policy, Opportunity, RiskProfile,
+     etc. — what PAPO reasons about) and an ARCHITECTURE layer (SystemComponent
+     and its four subclasses — what PAPO is built from). The founding paper
+     states this architecture directly ("four interlinked components"); the
+     CMDDS document that seeded v0.1.0 only described the domain layer and
+     the translation logic between domain concepts, which is why the
+     architecture layer was missing until this revision. Each component
+     relates to its corresponding domain concept via a dedicated property
+     (e.g., PolicyInputLayer -encodes-> Policy) rather than being merged
+     with it, since "the module that hosts policy" and "a policy" are
+     different ontological kinds.
+  2. Trigger is split into PolicyActivationTrigger vs. EscalationTrigger
+     because PAPO uses "trigger" for two distinct mechanisms: activating
+     policy vs. forcing escalation on failure. This distinction is
+     theory-level, not hazard-specific, so it belongs here.
+  3. NullOpportunity is modeled as an owl:equivalentClass restriction on
+     Opportunity, not a sibling class, because PAPO treats null output as
+     a required state of the same generation process, not an optional
+     separate concept — this is a claim about the theory, independent of
+     hazard.
+  4. UnderservedPopulationSegment subclasses are deliberately left
+     non-disjoint (see axioms.deliberatelyNotDisjoint) to reflect PAPO's
+     own intersectional framing of equity gaps — again a theory-level
+     commitment, not something particular to heatwaves.
+  5. Hazard-specific ontologies (e.g., papo-heatwave) should import this
+     file by IRI and only ADD classes/properties/axioms — never modify
+     this file directly. Cross-file disjointness groups (e.g., ResourceTypes)
+     should be restated in the extension with the full member list once
+     extended.
+  6. This file contains no ABox content and no citations to any specific
+     application document, by design.
+  7. (★ 0.3.0) The textbook chapter's own two-part structure — 8.7.1
+     generic "PAPO model," 8.7.2 heatwave-specific "PAPO-heatwave AI" —
+     is the third independent source (after the founding paper's own
+     generalizability claim and the CMDDS's step/simulation framing) to
+     draw the same domain-general vs. hazard-specific boundary this file
+     enforces. It also explicitly lists non-heat policy examples
+     (vaccination mandates, smoking bans, air quality alerts, building
+     codes, food recalls) under the same generic Policy Input Layer
+     description, which is direct textual support for keeping Policy and
+     its architecture-layer counterpart PolicyInputLayer hazard-agnostic.
+  8. (★ 0.3.0) Deliberately NOT added: the textbook's specific AI models
+     and tasks (XGBoost, LightGBM, recommender systems, anomaly detection,
+     etc.) per component. These are implementation/methodology choices,
+     not domain concepts — out of scope for a TBox per this ontology's own
+     explicitlyOutOfScope note and the CMDDS's "what, not how" boundary.
